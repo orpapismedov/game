@@ -2,15 +2,10 @@ import Phaser from 'phaser';
 import { gameConfig } from './phaser.config';
 
 // Import scenes
-// @ts-ignore
 import { BootScene } from './scenes/BootScene';
-// @ts-ignore
 import { PreloadScene } from './scenes/PreloadScene';
-// @ts-ignore
 import { Level1 } from './scenes/Level1';
-// @ts-ignore
 import { Level2 } from './scenes/Level2';
-// @ts-ignore
 import { HUDScene } from './scenes/HUDScene';
 
 // Add scenes to config

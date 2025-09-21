@@ -66,7 +66,10 @@ export class Level2 extends Phaser.Scene {
       this.touchInput.attackPressed = touchState.attackPressed;
       this.lastJumpKeyDown = combinedJumpHeld;
     }
-    if (this.player) this.player.update(time, delta, this.touchInput);
+    if (this.player) {
+      this.player.updateMovement(time, delta, this.touchInput);
+      this.player.update();
+    }
   (this.enemies.children as any).iterate((obj: any) => { if (obj instanceof EnemyDog) { obj.update(time, delta, this.player); } return false; });
     // Anti-clipping safeguard: ensure player does not sink below ground level
     if (this.player && this.player.body) {
