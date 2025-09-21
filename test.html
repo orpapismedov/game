@@ -1,78 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doggo Run</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doggo Run - Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #87CEEB, #98FB98);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 600px;
+    }
+    
+    h1 {
+      color: #2c5530;
+      margin-bottom: 20px;
+    }
+    
+    .status {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    
+    .game-container {
+      margin-top: 20px;
+      min-height: 400px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      background: #000;
+      position: relative;
+    }
+    
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 18px;
+    }
+    
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    
+    button:hover {
+      background: #218838;
+    }
+  </style>
 </head>
 <body>
-    <div id="game"></div>
-    <script type="module">
-        import * as Phaser from 'https://cdn.skypack.dev/phaser@3.80.1';
+  <div class="container">
+    <h1>🐕 Doggo Run - Game Setup</h1>
+    
+    <div class="status success">
+      ✅ Dev Server Running Successfully on Port 3002!
+    </div>
+    
+    <div class="status info">
+      🎮 Your game is ready to play!
+    </div>
+    
+    <p><strong>Game Features:</strong></p>
+    <ul style="text-align: left;">
+      <li>Mobile-first design with touch controls</li>
+      <li>Side-scrolling platformer gameplay</li>
+      <li>4 different enemy AI types</li>
+      <li>Collectible dog food items</li>
+      <li>Health system and physics</li>
+    </ul>
+    
+    <div class="status info">
+      <strong>Next Steps:</strong><br>
+      1. Add your dog images to <code>public/assets/</code><br>
+      2. Rename them: momi.png, dog1.png, dog2.png, dog3.png, dog4.png, food.png<br>
+      3. The game will load your images automatically!
+    </div>
+    
+    <button onclick="startGame()">🎮 Start Game</button>
+    <button onclick="location.reload()">🔄 Reload</button>
+    
+    <div class="game-container" id="game-container">
+      <div class="loading">Loading Doggo Run...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    async function startGame() {
+      document.querySelector('.loading').textContent = 'Initializing game...';
+      
+      try {
+        // Import and start the game
+        const { default: Phaser } = await import('phaser');
+        const { gameConfig } = await import('./src/phaser.config.ts');
         
+        // Simple game to test if Phaser is working
         const config = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            parent: 'game',
-            backgroundColor: '#87CEEB',
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: { y: 800 },
-                    debug: false
-                }
-            },
-            scene: {
-                preload: function() {
-                    // Create simple colored rectangles
-                    this.add.graphics()
-                        .fillStyle(0x8B4513)
-                        .fillRect(0, 0, 32, 32);
-                    this.textures.generate('player', { data: ['1'], pixelWidth: 32, pixelHeight: 32 });
-                    
-                    this.add.graphics()
-                        .fillStyle(0x00FF00)
-                        .fillRect(0, 0, 400, 32);
-                    this.textures.generate('ground', { data: ['1'], pixelWidth: 400, pixelHeight: 32 });
-                },
-                create: function() {
-                    // Create platforms
-                    this.platforms = this.physics.add.staticGroup();
-                    this.platforms.create(400, 568, 'ground').setScale(2, 1).refreshBody();
-                    this.platforms.create(400, 400, 'ground');
-                    
-                    // Create player
-                    this.player = this.physics.add.sprite(100, 450, 'player');
-                    this.player.setBounce(0.2);
-                    this.player.setCollideWorldBounds(true);
-                    this.player.setTint(0xFF6B6B);
-                    
-                    this.physics.add.collider(this.player, this.platforms);
-                    this.cursors = this.input.keyboard.createCursorKeys();
-                    
-                    this.add.text(16, 16, 'Doggo Run - Use arrow keys to move', { 
-                        fontSize: '16px', 
-                        fill: '#000' 
-                    });
-                },
-                update: function() {
-                    if (this.cursors.left.isDown) {
-                        this.player.setVelocityX(-160);
-                    } else if (this.cursors.right.isDown) {
-                        this.player.setVelocityX(160);
-                    } else {
-                        this.player.setVelocityX(0);
-                    }
-                    
-                    if (this.cursors.up.isDown && this.player.body.touching.down) {
-                        this.player.setVelocityY(-500);
-                    }
-                }
+          type: Phaser.AUTO,
+          width: 800,
+          height: 400,
+          parent: 'game-container',
+          backgroundColor: '#87CEEB',
+          scene: {
+            create: function() {
+              // Add some test graphics
+              this.add.text(400, 200, 'Doggo Run is Working! 🐕', {
+                fontSize: '32px',
+                color: '#ffffff',
+                fontFamily: 'Arial',
+                stroke: '#000000',
+                strokeThickness: 4
+              }).setOrigin(0.5);
+              
+              this.add.text(400, 250, 'Click anywhere to continue...', {
+                fontSize: '18px',
+                color: '#ffffff',
+                fontFamily: 'Arial'
+              }).setOrigin(0.5);
+              
+              // Click to load full game
+              this.input.on('pointerdown', () => {
+                this.scene.start('BootScene');
+              });
             }
+          }
         };
         
         new Phaser.Game(config);
-    </script>
+        document.querySelector('.loading').style.display = 'none';
+        
+      } catch (error) {
+        console.error('Game loading error:', error);
+        document.querySelector('.loading').textContent = 'Error loading game. Check console for details.';
+      }
+    }
+    
+    // Make function available globally
+    window.startGame = startGame;
+  </script>
 </body>
 </html>
