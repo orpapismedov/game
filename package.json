@@ -1,0 +1,28 @@
+{
+  "name": "doggo-run",
+  "version": "1.0.0",
+  "description": "A mobile-first side-scrolling platformer game featuring Momi the dog",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "phaser": "^3.80.0"
+  },
+  "keywords": [
+    "phaser",
+    "game",
+    "typescript",
+    "platformer",
+    "mobile"
+  ],
+  "author": "RON",
+  "license": "MIT"
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doggo Run</title>
+</head>
+<body>
+    <div id="game"></div>
+    <script type="module">
+        import * as Phaser from 'https://cdn.skypack.dev/phaser@3.80.1';
+        
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            parent: 'game',
+            backgroundColor: '#87CEEB',
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 800 },
+                    debug: false
+                }
+            },
+            scene: {
+                preload: function() {
+                    // Create simple colored rectangles
+                    this.add.graphics()
+                        .fillStyle(0x8B4513)
+                        .fillRect(0, 0, 32, 32);
+                    this.textures.generate('player', { data: ['1'], pixelWidth: 32, pixelHeight: 32 });
+                    
+                    this.add.graphics()
+                        .fillStyle(0x00FF00)
+                        .fillRect(0, 0, 400, 32);
+                    this.textures.generate('ground', { data: ['1'], pixelWidth: 400, pixelHeight: 32 });
+                },
+                create: function() {
+                    // Create platforms
+                    this.platforms = this.physics.add.staticGroup();
+                    this.platforms.create(400, 568, 'ground').setScale(2, 1).refreshBody();
+                    this.platforms.create(400, 400, 'ground');
+                    
+                    // Create player
+                    this.player = this.physics.add.sprite(100, 450, 'player');
+                    this.player.setBounce(0.2);
+                    this.player.setCollideWorldBounds(true);
+                    this.player.setTint(0xFF6B6B);
+                    
+                    this.physics.add.collider(this.player, this.platforms);
+                    this.cursors = this.input.keyboard.createCursorKeys();
+                    
+                    this.add.text(16, 16, 'Doggo Run - Use arrow keys to move', { 
+                        fontSize: '16px', 
+                        fill: '#000' 
+                    });
+                },
+                update: function() {
+                    if (this.cursors.left.isDown) {
+                        this.player.setVelocityX(-160);
+                    } else if (this.cursors.right.isDown) {
+                        this.player.setVelocityX(160);
+                    } else {
+                        this.player.setVelocityX(0);
+                    }
+                    
+                    if (this.cursors.up.isDown && this.player.body.touching.down) {
+                        this.player.setVelocityY(-500);
+                    }
+                }
+            }
+        };
+        
+        new Phaser.Game(config);
+    </script>
+</body>
+</html>

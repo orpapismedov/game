@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doggo Run - Simple Version</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        #game-container {
+            position: relative;
+        }
+        canvas {
+            border: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+    <script>
+        // Simple game configuration
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            parent: 'game',
+            backgroundColor: '#87CEEB',
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 800 },
+                    debug: false
+                }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        let player;
+        let platforms;
+        let cursors;
+        let gameStarted = false;
+
+        function preload() {
+            // Create simple colored rectangles for now (until images are added)
+            this.add.rectangle(400, 50, 800, 100, 0x87CEEB); // Sky background
+            
+            // Create colored rectangles for game objects
+            this.add.graphics()
+                .fillStyle(0x8B4513)
+                .fillRect(0, 0, 32, 32); // Brown for player
+            this.textures.generate('player', { data: ['1'], pixelWidth: 32, pixelHeight: 32 });
+            
+            this.add.graphics()
+                .fillStyle(0x00FF00)
+                .fillRect(0, 0, 400, 32); // Green for platforms
+            this.textures.generate('ground', { data: ['1'], pixelWidth: 400, pixelHeight: 32 });
+            
+            this.add.text(400, 100, 'Doggo Run - Simple Version', { 
+                fontSize: '32px', 
+                fill: '#000',
+                align: 'center'
+            }).setOrigin(0.5);
+            
+            this.add.text(400, 150, 'Use arrow keys to move and jump', { 
+                fontSize: '16px', 
+                fill: '#000',
+                align: 'center'
+            }).setOrigin(0.5);
+        }
+
+        function create() {
+            // Create platforms
+            platforms = this.physics.add.staticGroup();
+            
+            // Ground
+            platforms.create(200, 568, 'ground').setScale(2, 1).refreshBody();
+            platforms.create(600, 568, 'ground').setScale(2, 1).refreshBody();
+            
+            // Some platforms
+            platforms.create(400, 400, 'ground');
+            platforms.create(50, 250, 'ground');
+            platforms.create(750, 220, 'ground');
+
+            // Create player
+            player = this.physics.add.sprite(100, 450, 'player');
+            player.setBounce(0.2);
+            player.setCollideWorldBounds(true);
+            player.setTint(0xFF6B6B); // Make it reddish to represent Momi
+
+            // Player physics
+            this.physics.add.collider(player, platforms);
+
+            // Create cursor keys
+            cursors = this.input.keyboard.createCursorKeys();
+            
+            // Add WASD controls too
+            this.wasd = this.input.keyboard.addKeys('W,S,A,D');
+
+            gameStarted = true;
+            
+            // Add instructions
+            this.add.text(16, 16, 'Arrow Keys or WASD to move\nSpace or W to jump', { 
+                fontSize: '16px', 
+                fill: '#000' 
+            });
+        }
+
+        function update() {
+            if (!gameStarted) return;
+
+            // Player movement
+            if (cursors.left.isDown || this.wasd.A.isDown) {
+                player.setVelocityX(-160);
+            } else if (cursors.right.isDown || this.wasd.D.isDown) {
+                player.setVelocityX(160);
+            } else {
+                player.setVelocityX(0);
+            }
+
+            // Jumping
+            if ((cursors.up.isDown || this.wasd.W.isDown || cursors.space.isDown) && player.body.touching.down) {
+                player.setVelocityY(-500);
+            }
+        }
+
+        // Start the game
+        const game = new Phaser.Game(config);
+        
+        console.log('Simple Doggo Run game started!');
+    </script>
+</body>
+</html>
